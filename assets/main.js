@@ -1,10 +1,32 @@
 const URL = "https://estagio.geopostenergy.com/WorldCup/GetAllTeams";
+const groups = [];
+const teamLength = 32;
+
+async function main() {
+    const data = await fetchData();
+    
+    while(groups.length < teamLength) {
+        const randomNumber = randomValues(data.length);
+        const randomTeam = data[randomNumber];
+
+        if(!groups.includes(randomTeam)) {
+            groups.push(randomTeam);
+        }
+    }
+    console.log(groups)
+}
+
 async function fetchData() {
-    await fetch(URL, {
+    return fetch(URL, {
         headers:{
             "git-user": "erickggarcia"
         }  
-    }).then(data => console.log(data.json()))
+    }).then(data => data.json())
+    .then(json => json.Result);
 }
 
-fetchData();
+function randomValues(size) {
+    return Math.floor(Math.random() * size);
+}
+
+main();
