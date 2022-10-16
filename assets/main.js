@@ -9,7 +9,8 @@ teamLetters.forEach(letter => teamMap.set(letter, []));
 teamLetters.forEach(letter => classificationMap.set(letter, []));
 
 const teamLength = 32;
-const finalSixteenClassification = [];
+const finals = [];
+const losers = [];
 
 async function main() {
     const data = await fetchData();
@@ -70,16 +71,20 @@ function match(teamA, teamB) {
         console.log(`${teamA.Name} venceu a partida de ${goalScoreTeamA} X ${goalScoreTeamB} contra ${teamB.Name}`);
         teamA.goalScore = isNaN(teamA.goalScore) ? 3 : teamA.goalScore + 3;
         teamA.goals = isNaN(teamA.goals) ? 0 : teamA.goals + goalScoreTeamA;
+        losers.push(teamB);
     } else if(goalScoreTeamB > goalScoreTeamA) {
         console.log(`${teamB.Name} venceu a partida de ${goalScoreTeamB} X ${goalScoreTeamA} contra ${teamA.Name}`);
         teamB.goalScore = isNaN(teamB.goalScore) ? 3 : teamB.goalScore + 3;
         teamB.goals = isNaN(teamB.goals) ? 0 : teamB.goals + goalScoreTeamB;
+        losers.push(teamA)
     } else {
         console.log(`${teamA.Name} e ${teamB.Name} empataram em ${goalScoreTeamA} X ${goalScoreTeamB}`);
         teamA.goalScore = isNaN(teamA.goalScore) ? 1 : teamA.goalScore + 1;
         teamB.goalScore = isNaN(teamB.goalScore) ? 1 : teamB.goalScore + 1;
         teamA.goals = isNaN(teamA.goals) ? 0 : teamA.goals + goalScoreTeamA;
         teamB.goals = isNaN(teamB.goals) ? 0 : teamB.goals + goalScoreTeamB;
+        const tieBreaker = randomValues(2);
+        tieBreaker === 0 ? losers.push(teamA) : losers.push(teamB);
     }
 }
 
@@ -116,30 +121,31 @@ function classificationGroupFase(gameResults) {
             secondPlace = Math.random(copia.slice(1).length -1 / 2);
         }
     }
-    finalSixteenClassification.push(firstPlace, secondPlace);
+    finals.push(firstPlace, secondPlace);
 } 
 
 function removePoints() {
-    for(let i = 0; i < finalSixteenClassification.length; i++) {
-        finalSixteenClassification[i].goalScore = 0;
-        finalSixteenClassification[i].goals = 0;
+    for(let i = 0; i < finals.length; i++) {
+        finals[i].goalScore = 0;
+        finals[i].goals = 0;
     }
     callNewMatches();
 }
 
 function callNewMatches() {
-    if(finalSixteenClassification.length === 16) {
+    if(finals.length === 16) {
         finalSixteen(); 
     }
 }
 
 //confronto das oitavas de final
 function finalSixteen() {
+    losers.splice(0, losers.length);
     console.log();
-    console.log("Oitavas de final")
-    for(let i = 0; i < finalSixteenClassification.length / 2; i++) {
-        const firstGroup = finalSixteenClassification[i];
-        const lastGroup = finalSixteenClassification[finalSixteenClassification.length-1-i]
+    console.log("Oitavas de final");
+    for(let i = 0; i < finals.length / 2; i++) {
+        const firstGroup = finals[i];
+        const lastGroup = finals[finals.length-1-i]
         match(firstGroup, lastGroup);
     }
     deathMatches()
@@ -148,11 +154,12 @@ function finalSixteen() {
 }
 
 function finalEight() {
+    losers.splice(0, losers.length);
     console.log();
     console.log("Quartas de final")
-    for(let i = 0; i < finalSixteenClassification.length / 2; i++) {
-        const firstGroup = finalSixteenClassification[i];
-        const lastGroup = finalSixteenClassification[finalSixteenClassification.length-1-i]
+    for(let i = 0; i < finals.length / 2; i++) {
+        const firstGroup = finals[i];
+        const lastGroup = finals[finals.length-1-i]
         match(firstGroup, lastGroup);
     }
     deathMatches();
@@ -161,11 +168,12 @@ function finalEight() {
 }
 
 function Semifinal() {
+    losers.splice(0, losers.length);
     console.log();
     console.log("Semifinal")
-    for(let i = 0; i < finalSixteenClassification.length / 2; i++) {
-        const firstGroup = finalSixteenClassification[i];
-        const lastGroup = finalSixteenClassification[finalSixteenClassification.length-1-i]
+    for(let i = 0; i < finals.length / 2; i++) {
+        const firstGroup = finals[i];
+        const lastGroup = finals[finals.length-1-i]
         match(firstGroup, lastGroup);
     }
     deathMatches();
@@ -175,34 +183,22 @@ function Semifinal() {
 
 
 function final() {
+    losers.splice(0, losers.length);
     console.log();
     console.log("Final")
-    for(let i = 0; i < finalSixteenClassification.length / 2; i++) {
-        const firstGroup = finalSixteenClassification[i];
-        const lastGroup = finalSixteenClassification[finalSixteenClassification.length-1-i]
+    for(let i = 0; i < finals.length / 2; i++) {
+        const firstGroup = finals[i];
+        const lastGroup = finals[finals.length-1-i]
         match(firstGroup, lastGroup);
     }
     deathMatches();
-    
 }
 
 //Função que vai definir o grande campeão!
 function deathMatches() {
-    for(let i = 0; i < finalSixteenClassification.length; i++) {
-        const firstGroup = finalSixteenClassification[i];
-        const lastGroup = finalSixteenClassification[finalSixteenClassification.length-1-i];
-
-        let initialIndex = finalSixteenClassification.indexOf(firstGroup);
-        let finalIndex = finalSixteenClassification.lastIndexOf(lastGroup);
-
-        if(firstGroup.goals > lastGroup.goals) {
-            finalSixteenClassification.splice(finalIndex, 1);
-        } else if(lastGroup.goals > firstGroup.goals){
-            finalSixteenClassification.splice(initialIndex, 1);
-        } else {
-            finalSixteenClassification.splice(finalIndex, 1);
-        }
-    }
+    losers.forEach((loser) => {
+        finals.splice(finals.indexOf(loser), 1);
+    })
 }
 
 async function fetchData() {
