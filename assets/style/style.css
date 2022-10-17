@@ -1,0 +1,65 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background: url("../img/stadium.jpg");
+    background-attachment: fixed;
+}
+
+h1, h2 {
+    text-align: center;
+    padding: 10px;
+    color: white;
+    background-color: black;
+}
+
+table {
+    width: 50%;
+    margin: 50px;
+    border: 1px solid black;
+    margin: auto;
+}
+
+
+th {
+    border: 1px solid black;
+    padding: 5px;
+    color: white;
+    font-weight: bolder;
+    background-color: black;
+}
+
+tr {
+    border: 1px solid black;
+    padding: 5px;
+}
+
+tr:nth-child(odd) {
+    background-color: #d1eaf5;
+}
+
+tr:nth-child(even) {
+    background-color: #c3d6f2;
+}
+
+td {
+    border: 1px solid black;
+    padding: 5px;
+    text-align: center;
+}
+
+.cabecalho {
+    width: 100vw;
+}
+
+.titlePhases {
+    font-weight: bold;
+    font-size: 22px;
+    text-align: center;
+}
